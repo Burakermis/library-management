@@ -32,6 +32,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Page<Book> getBooks(String title, String author, String isbn, String genre, Pageable pageable) {
+        Specification<Book> spec = Specification.where(BookSpecification.hasTitle(title))
+                .and(BookSpecification.hasAuthor(author))
+                .and(BookSpecification.hasIsbn(isbn))
+                .and(BookSpecification.hasGenre(genre));
+        return bookRepository.findAll(spec, pageable);
+    }
+
+    @Override
     public Page<Book> searchBooks(String title, String author, String isbn, String genre, Pageable pageable) {
         Specification<Book> spec = createBookSpecification(title, author, isbn, genre);
         return bookRepository.findAll(spec, pageable);

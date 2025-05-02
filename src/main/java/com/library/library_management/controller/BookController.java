@@ -8,6 +8,7 @@ import com.library.library_management.service.contract.BookService;
 import com.library.library_management.util.BookMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +37,21 @@ public class BookController {
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
         return ResponseEntity.ok(BookMapper.toDto(book));
     }
+
+    @GetMapping("/books")
+    public ResponseEntity<Page<Book>> getBooks(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String isbn,
+            @RequestParam(required = false) String genre,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "title") String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Book> books = bookService.getBooks(title, author, isbn, genre, pageable);
+        return ResponseEntity.ok(books);
+    }
+
 
     @GetMapping
     public ResponseEntity<Page<BookResponse>> searchBooks(

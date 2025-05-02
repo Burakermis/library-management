@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface BookService {
     Book addBook(Book book);
     Optional<Book> getBookById(Long id);
+    Page<Book> getBooks(String title, String author, String isbn, String genre, Pageable pageable);
     Page<Book> searchBooks(String title, String author, String isbn, String genre, Pageable pageable);
     Book updateBook(Long id, Book updatedBook);
     void deleteBook(Long id);
