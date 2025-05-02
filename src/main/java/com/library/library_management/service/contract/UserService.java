@@ -1,14 +1,13 @@
 package com.library.library_management.service.contract;
 
-import com.library.library_management.entity.User;
+import com.library.library_management.dto.requests.UserRequest;
+import com.library.library_management.dto.responses.UserResponse;
 
 import java.util.Optional;
 
 public interface UserService {
-    User registerUser(User user);
-    User updateUser(Long id, User updatedUser);
+    UserResponse registerUser(UserRequest userRequest);
+    UserResponse updateUser(Long id, UserRequest updatedUser);
     void deleteUser(Long id);
-    Optional<User> getUserById(Long id);
-    Optional<User> getUserByEmail(String email);
+    Optional<UserResponse> getUserById(Long id);
 }
-

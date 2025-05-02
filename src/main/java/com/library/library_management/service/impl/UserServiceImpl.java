@@ -1,6 +1,9 @@
 package com.library.library_management.service.impl;
 
+import com.library.library_management.dto.requests.UserRequest;
+import com.library.library_management.dto.responses.UserResponse;
 import com.library.library_management.entity.User;
+import com.library.library_management.mapper.UserMapper;
 import com.library.library_management.repository.UserRepository;
 import com.library.library_management.service.contract.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,25 +18,28 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     @Override
-    public User registerUser(User user) {
-        boolean exists = userRepository.findByEmail(user.getEmail()).isPresent();
+    public UserResponse registerUser(UserRequest userRequest) {
+        boolean exists = userRepository.findByEmail(userRequest.getEmail()).isPresent();
         if (exists) {
             throw new IllegalArgumentException("Bu e-posta adresi ile bir kullanıcı zaten mevcut.");
         }
+        User user = userMapper.toEntity(userRequest);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return userMapper.toDto(savedUser);
     }
 
     @Override
-    public User updateUser(Long id, User updatedUser) {
+    public UserResponse updateUser(Long id, UserRequest updatedUser) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı."));
-        user.setName(updatedUser.getName());
+        user.setName(updatedUser.getUsername());
         user.setEmail(updatedUser.getEmail());
         user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-        user.setRole(updatedUser.getRole());
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return userMapper.toDto(savedUser);
     }
 
     @Override
@@ -44,13 +50,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
-    }
-
-    @Override
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<UserResponse> getUserById(Long id) {
+        return userRepository.findById(id).map(userMapper::toDto);
     }
 }
-
