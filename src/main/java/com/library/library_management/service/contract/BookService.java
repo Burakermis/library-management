@@ -1,17 +1,14 @@
 package com.library.library_management.service.contract;
 
-import com.library.library_management.entity.Book;
+import com.library.library_management.dto.requests.BookRequest;
+import com.library.library_management.dto.responses.BookResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Optional;
-
 public interface BookService {
-    Book addBook(Book book);
-    Optional<Book> getBookById(Long id);
-    Page<Book> getBooks(String title, String author, String isbn, String genre, Pageable pageable);
-    Page<Book> searchBooks(String title, String author, String isbn, String genre, Pageable pageable);
-    Book updateBook(Long id, Book updatedBook);
+    BookResponse addBook(BookRequest request);
+    BookResponse getBookById(Long id);
+    Page<BookResponse> getBooks(String title, String author, String isbn, String genre, Pageable pageable);
+    BookResponse updateBook(Long id, BookRequest request);
     void deleteBook(Long id);
 }
-

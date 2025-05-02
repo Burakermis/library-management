@@ -1,8 +1,11 @@
 package com.library.library_management.service.impl;
 
+import com.library.library_management.dto.requests.BookRequest;
+import com.library.library_management.dto.responses.BookResponse;
 import com.library.library_management.entity.Book;
 import com.library.library_management.exception.BookAlreadyExistsException;
 import com.library.library_management.exception.BookNotFoundException;
+import com.library.library_management.mapper.BookMapper;
 import com.library.library_management.repository.BookRepository;
 import com.library.library_management.service.contract.BookService;
 import com.library.library_management.specification.BookSpecification;
@@ -19,41 +22,43 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
 
     @Override
-    public Book addBook(Book book) {
-        checkIfBookExistsByIsbn(book.getIsbn());
-        return bookRepository.save(book);
+    public BookResponse addBook(BookRequest request) {
+        checkIfBookExistsByIsbn(request.getIsbn());
+        Book book = bookMapper.toEntity(request);
+        Book savedBook = bookRepository.save(book);
+        return bookMapper.toDto(savedBook);
     }
 
     @Override
-    public Optional<Book> getBookById(Long id) {
-        return bookRepository.findById(id);
+    public BookResponse getBookById(Long id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Kitap bulunamadı!"));
+        return bookMapper.toDto(book);
     }
 
     @Override
-    public Page<Book> getBooks(String title, String author, String isbn, String genre, Pageable pageable) {
+    public Page<BookResponse> getBooks(String title, String author, String isbn, String genre, Pageable pageable) {
         Specification<Book> spec = Specification.where(BookSpecification.hasTitle(title))
                 .and(BookSpecification.hasAuthor(author))
                 .and(BookSpecification.hasIsbn(isbn))
                 .and(BookSpecification.hasGenre(genre));
-        return bookRepository.findAll(spec, pageable);
+        Page<Book> books = bookRepository.findAll(spec, pageable);
+        return books.map(bookMapper::toDto);
     }
 
     @Override
-    public Page<Book> searchBooks(String title, String author, String isbn, String genre, Pageable pageable) {
-        Specification<Book> spec = createBookSpecification(title, author, isbn, genre);
-        return bookRepository.findAll(spec, pageable);
-    }
-
-    @Override
-    public Book updateBook(Long id, Book updatedBook) {
+    public BookResponse updateBook(Long id, BookRequest request) {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Kitap bulunamadı!"));
 
+        Book updatedBook = bookMapper.toEntity(request);
         updateBookDetails(existingBook, updatedBook);
 
-        return bookRepository.save(existingBook);
+        Book savedBook = bookRepository.save(existingBook);
+        return bookMapper.toDto(savedBook);
     }
 
     @Override
@@ -63,19 +68,11 @@ public class BookServiceImpl implements BookService {
         bookRepository.delete(book);
     }
 
-    // Helper methods to improve readability and reuse
+    // Helper methods
     private void checkIfBookExistsByIsbn(String isbn) {
         if (bookRepository.existsByIsbn(isbn)) {
             throw new BookAlreadyExistsException("Bu ISBN ile bir kitap zaten mevcut.");
         }
-    }
-
-    private Specification<Book> createBookSpecification(String title, String author, String isbn, String genre) {
-        Specification<Book> spec = Specification.where(BookSpecification.hasTitle(title))
-                .and(BookSpecification.hasAuthor(author))
-                .and(BookSpecification.hasIsbn(isbn))
-                .and(BookSpecification.hasGenre(genre));
-        return spec;
     }
 
     private void updateBookDetails(Book existingBook, Book updatedBook) {
@@ -86,4 +83,3 @@ public class BookServiceImpl implements BookService {
         existingBook.setPublicationDate(updatedBook.getPublicationDate());
     }
 }
-
