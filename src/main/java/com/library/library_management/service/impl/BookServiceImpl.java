@@ -49,7 +49,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book updateBook(Long id, Book updatedBook) {
         Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
+                .orElseThrow(() -> new BookNotFoundException("Kitap bulunamadı!"));
 
         updateBookDetails(existingBook, updatedBook);
 
@@ -59,14 +59,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteBook(Long id) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException("Book not found with id: " + id));
+                .orElseThrow(() -> new BookNotFoundException("Kitap bulunamadı!"));
         bookRepository.delete(book);
     }
 
     // Helper methods to improve readability and reuse
     private void checkIfBookExistsByIsbn(String isbn) {
         if (bookRepository.existsByIsbn(isbn)) {
-            throw new BookAlreadyExistsException("A book with ISBN " + isbn + " already exists.");
+            throw new BookAlreadyExistsException("Bu ISBN ile bir kitap zaten mevcut.");
         }
     }
 

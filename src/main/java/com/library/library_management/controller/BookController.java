@@ -5,7 +5,7 @@ import com.library.library_management.dto.responses.BookResponse;
 import com.library.library_management.entity.Book;
 import com.library.library_management.exception.ResourceNotFoundException;
 import com.library.library_management.service.contract.BookService;
-import com.library.library_management.util.BookMapper;
+import com.library.library_management.mapper.BookMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -31,6 +31,14 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(BookMapper.toDto(book));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<BookResponse> updateBook(
+            @PathVariable Long id,
+            @Valid @RequestBody BookRequest request) {
+        Book updatedBook = bookService.updateBook(id, BookMapper.toEntity(request));
+        return ResponseEntity.ok(BookMapper.toDto(updatedBook));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<BookResponse> getBook(@PathVariable Long id) {
         Book book = bookService.getBookById(id)
@@ -51,7 +59,6 @@ public class BookController {
         Page<Book> books = bookService.getBooks(title, author, isbn, genre, pageable);
         return ResponseEntity.ok(books);
     }
-
 
     @GetMapping
     public ResponseEntity<Page<BookResponse>> searchBooks(

@@ -1,4 +1,4 @@
-package com.library.library_management.util;
+package com.library.library_management.mapper;
 
 import com.library.library_management.dto.requests.BookRequest;
 import com.library.library_management.dto.responses.BookResponse;
