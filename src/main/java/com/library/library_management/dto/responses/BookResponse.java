@@ -6,6 +6,8 @@ import java.time.LocalDate;
 
 @Data
 @Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class BookResponse {
     private Long id;
     private String title;
