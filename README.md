@@ -17,6 +17,6 @@ Library Management System, bir kütüphane yönetim sistemi uygulamasıdır. Bu 
 - **Spring Boot 3.x**
 - **Maven**
 - **JWT (JSON Web Token)**
-- **H2 Database** (Geliştirme için)
-- **PostreSQL** (Üretim için)
-- **Swagger/OpenAPI** (API dokümantasyonu)
+- **H2 Database** 
+- **PostreSQL** 
+- **Swagger/OpenAPI**
