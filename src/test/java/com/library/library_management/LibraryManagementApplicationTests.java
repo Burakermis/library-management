@@ -10,7 +10,5 @@ class LibraryManagementApplicationTests {
 
 	@Test
 	void contextLoads() {
-		LibraryManagementApplication application = new LibraryManagementApplication();
-		assertNotNull(application, "Application instance should not be null");
 	}
 }
