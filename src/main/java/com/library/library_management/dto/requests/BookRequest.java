@@ -6,6 +6,9 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Data
+@Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class BookRequest {
 
     @NotBlank(message = "Title is required")
