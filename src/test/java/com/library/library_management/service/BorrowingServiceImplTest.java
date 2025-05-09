@@ -161,7 +161,7 @@ class BorrowingServiceImplTest {
         BorrowingResponse response = new BorrowingResponse();
         response.setId(1L);
 
-        when(borrowingRepository.findByUserId(userId)).thenReturn(List.of(borrowing));
+        when(borrowingRepository.findByUser_Id(userId)).thenReturn(List.of(borrowing));
         when(borrowingMapper.toDto(borrowing)).thenReturn(response);
 
         List<BorrowingResponse> result = borrowingService.getUserHistory(userId);
@@ -173,7 +173,7 @@ class BorrowingServiceImplTest {
 
     @Test
     void testGetUserHistory_NoBorrowings() {
-        when(borrowingRepository.findByUserId(1L)).thenReturn(Collections.emptyList());
+        when(borrowingRepository.findByUser_Id(1L)).thenReturn(Collections.emptyList());
 
         assertThrows(BorrowingNotFoundException.class, () -> borrowingService.getUserHistory(1L));
     }

@@ -90,7 +90,7 @@ public class BorrowingServiceImpl implements BorrowingService {
     public List<BorrowingResponse> getUserHistory(Long userId) {
         log.info("Fetching borrowing history for user ID {}", userId);
 
-        List<Borrowing> borrowings = borrowingRepository.findByUserId(userId);
+        List<Borrowing> borrowings = borrowingRepository.findByUser_Id(userId);
         if (borrowings.isEmpty()) {
             log.warn("No borrowings found for user ID {}", userId);
             throw new BorrowingNotFoundException("No borrowings found for this user.");

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface BorrowingRepository extends JpaRepository<Borrowing, Long> {
-    List<Borrowing> findByUserId(Long userId);
+    List<Borrowing> findByUser_Id(Long userId);
     List<Borrowing> findByDueDateBeforeAndReturnDateIsNull(LocalDate date);
 
 }
