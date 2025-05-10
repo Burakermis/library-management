@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface UserService {
     UserResponse registerUser(UserRequest userRequest);
-    UserResponse updateUser(Long id, UserRequest updatedUser);
+    UserResponse updateUser(UserRequest updatedUser);
     void deleteUser(Long id);
     Optional<UserResponse> getUserById(Long id);
 }

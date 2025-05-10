@@ -2,6 +2,7 @@ package com.library.library_management.service.impl;
 
 import com.library.library_management.dto.requests.UserRequest;
 import com.library.library_management.dto.responses.UserResponse;
+import com.library.library_management.entity.Role;
 import com.library.library_management.entity.User;
 import com.library.library_management.mapper.UserMapper;
 import com.library.library_management.repository.UserRepository;
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Bu e-posta adresi ile bir kullanıcı zaten mevcut.");
         }
         User user = userMapper.toEntity(userRequest);
+        user.setRole(Role.READER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         log.info("User registered successfully with ID: {}", savedUser.getId());
@@ -38,19 +40,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUser(Long id, UserRequest updatedUser) {
-        log.info("Updating user with ID: {}", id);
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("User not found for ID: {}", id);
-                    return new RuntimeException("Kullanıcı bulunamadı.");
-                });
-
-        user.setName(updatedUser.getUsername());
-        user.setEmail(updatedUser.getEmail());
+    public UserResponse updateUser(UserRequest updatedUser) {
+        log.info("Updating user with Email: {}", updatedUser.getEmail());
+        boolean exists = userRepository.findByEmail(updatedUser.getEmail()).isPresent();
+        if (exists) {
+            log.warn("Registration failed. Email already in use: {}", updatedUser.getEmail());
+            throw new IllegalArgumentException("Bu e-posta adresi ile bir kullanıcı zaten mevcut.");
+        }
+        User user = userMapper.toEntity(updatedUser);
         user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         User savedUser = userRepository.save(user);
-        log.info("User with ID: {} updated successfully", id);
+        log.info("User with Email: {} updated successfully", updatedUser.getEmail());
         return userMapper.toDto(savedUser);
     }
 
