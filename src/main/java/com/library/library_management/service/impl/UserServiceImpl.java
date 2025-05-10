@@ -6,9 +6,13 @@ import com.library.library_management.entity.Role;
 import com.library.library_management.entity.User;
 import com.library.library_management.mapper.UserMapper;
 import com.library.library_management.repository.UserRepository;
+import com.library.library_management.security.JwtTokenProvider;
 import com.library.library_management.service.contract.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public UserResponse registerUser(UserRequest userRequest) {
@@ -37,6 +42,26 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
         log.info("User registered successfully with ID: {}", savedUser.getId());
         return userMapper.toDto(savedUser);
+    }
+
+    @Override
+    public String login(String email, String password) {
+        log.info("Attempting to log in user with email: {}", email);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    log.warn("Login failed. User not found for email: {}", email);
+                    return new IllegalArgumentException("Geçersiz e-posta");
+                });
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("Geçersiz şifre.");
+        }
+
+        String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRole());
+        log.info("Login successful for user with email: {}", email);
+
+        return token;
     }
 
     @Override

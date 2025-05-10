@@ -1,5 +1,6 @@
 package com.library.library_management.controller;
 
+import com.library.library_management.dto.requests.LoginUserRequest;
 import com.library.library_management.dto.requests.UserRequest;
 import com.library.library_management.dto.responses.UserResponse;
 import com.library.library_management.service.contract.UserService;
@@ -17,6 +18,12 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserResponse> registerUser(@RequestBody UserRequest userRequest) {
         return ResponseEntity.ok(userService.registerUser(userRequest));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody LoginUserRequest loginUserRequest) {
+        String token = userService.login(loginUserRequest.getEmail(), loginUserRequest.getPassword());
+        return ResponseEntity.ok(token);
     }
 
     @PutMapping("/{id}")
