@@ -37,18 +37,18 @@ public class BorrowingServiceImpl implements BorrowingService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.warn("User with ID {} not found", userId);
-                    return new UserNotFoundException("User not found");
+                    return new UserNotFoundException("Kullanıcı bulunamadı");
                 });
 
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> {
                     log.warn("Book with ID {} not found", bookId);
-                    return new BookNotFoundException("Book not found");
+                    return new BookNotFoundException("Kitap bulunamadı");
                 });
 
         if (!book.isAvailable()) {
             log.warn("Book with ID {} is not available", bookId);
-            throw new BookNotAvailableException("Book is not available for borrowing.");
+            throw new BookNotAvailableException("Kitap ödünç almak için uygun değil.");
         }
 
         Borrowing borrowing = new Borrowing();
@@ -72,7 +72,7 @@ public class BorrowingServiceImpl implements BorrowingService {
         Borrowing borrowing = borrowingRepository.findById(borrowingId)
                 .orElseThrow(() -> {
                     log.warn("Borrowing record with ID {} not found", borrowingId);
-                    return new BorrowingNotFoundException("Borrowing record not found");
+                    return new BorrowingNotFoundException("Ödünç kaydı bulunamadı");
                 });
 
         borrowing.setReturnDate(LocalDate.now());
@@ -93,7 +93,7 @@ public class BorrowingServiceImpl implements BorrowingService {
         List<Borrowing> borrowings = borrowingRepository.findByUser_Id(userId);
         if (borrowings.isEmpty()) {
             log.warn("No borrowings found for user ID {}", userId);
-            throw new BorrowingNotFoundException("No borrowings found for this user.");
+            throw new BorrowingNotFoundException("Bu kullanıcı için ödünç kaydı bulunamadı.");
         }
 
         log.debug("Found {} borrowings for user ID {}", borrowings.size(), userId);
@@ -110,4 +110,3 @@ public class BorrowingServiceImpl implements BorrowingService {
         return borrowings.stream().map(borrowingMapper::toDto).toList();
     }
 }
-
