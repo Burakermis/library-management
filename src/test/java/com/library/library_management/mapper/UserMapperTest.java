@@ -14,7 +14,7 @@ class UserMapperTest {
     @Test
     void testToEntity() {
         UserRequest request = new UserRequest();
-        request.setUsername("Test User");
+        request.setName("Test User");
         request.setEmail("test@example.com");
         request.setPassword("password123");
 
@@ -29,14 +29,12 @@ class UserMapperTest {
     @Test
     void testToDto() {
         User user = new User();
-        user.setId(1L);
         user.setName("Test User");
         user.setEmail("test@example.com");
 
         UserResponse response = userMapper.toDto(user);
 
         assertNotNull(response);
-        assertEquals(1L, response.getId());
         assertEquals("Test User", response.getName());
         assertEquals("test@example.com", response.getEmail());
     }

@@ -45,11 +45,9 @@ class UserServiceImplTest {
         user.setEmail("test@example.com");
 
         User savedUser = new User();
-        savedUser.setId(1L);
         savedUser.setEmail("test@example.com");
 
         UserResponse userResponse = new UserResponse();
-        userResponse.setId(1L);
         userResponse.setEmail("test@example.com");
 
         when(userRepository.findByEmail(userRequest.getEmail())).thenReturn(Optional.empty());
@@ -61,7 +59,6 @@ class UserServiceImplTest {
         UserResponse result = userService.registerUser(userRequest);
 
         assertNotNull(result);
-        assertEquals(1L, result.getId());
         assertEquals("test@example.com", result.getEmail());
         verify(userRepository, times(1)).save(user);
     }
@@ -88,7 +85,6 @@ class UserServiceImplTest {
         user.setEmail("test@example.com");
 
         UserResponse userResponse = new UserResponse();
-        userResponse.setId(1L);
         userResponse.setEmail("test@example.com");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -97,7 +93,6 @@ class UserServiceImplTest {
         Optional<UserResponse> result = userService.getUserById(1L);
 
         assertTrue(result.isPresent());
-        assertEquals(1L, result.get().getId());
         assertEquals("test@example.com", result.get().getEmail());
     }
 
