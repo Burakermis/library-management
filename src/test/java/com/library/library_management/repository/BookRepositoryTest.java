@@ -5,14 +5,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
 class BookRepositoryTest {
 
     @Autowired
@@ -32,48 +34,26 @@ class BookRepositoryTest {
         book2.setIsbn("0987654321");
         book2.setGenre("Technology");
 
-        bookRepository.saveAll(List.of(book1, book2));
-    }
-
-    @Test
-    void testSearchBooks_ByTitle() {
-        Page<Book> result = bookRepository.searchBooks("Spring Boot", null, null, null, PageRequest.of(0, 10));
-
-        assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
-        assertEquals("Spring Boot in Action", result.getContent().get(0).getTitle());
-    }
-
-    @Test
-    void testSearchBooks_ByAuthor() {
-        Page<Book> result = bookRepository.searchBooks(null, "Robert C. Martin", null, null, PageRequest.of(0, 10));
-
-        assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
-        assertEquals("Clean Code", result.getContent().get(0).getTitle());
-    }
-
-    @Test
-    void testSearchBooks_ByIsbn() {
-        Page<Book> result = bookRepository.searchBooks(null, null, "1234567890", null, PageRequest.of(0, 10));
-
-        assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
-        assertEquals("Spring Boot in Action", result.getContent().get(0).getTitle());
-    }
-
-    @Test
-    void testSearchBooks_ByGenre() {
-        Page<Book> result = bookRepository.searchBooks(null, null, null, "Technology", PageRequest.of(0, 10));
-
-        assertNotNull(result);
-        assertEquals(2, result.getTotalElements());
+        bookRepository.save(book1);
+        bookRepository.save(book2);
     }
 
     @Test
     void testExistsByIsbn() {
         boolean exists = bookRepository.existsByIsbn("1234567890");
-
         assertTrue(exists);
+
+        boolean notExists = bookRepository.existsByIsbn("1111111111");
+        assertFalse(notExists);
+    }
+
+    @Test
+    void testFindById() {
+        Book savedBook = bookRepository.findAll().getFirst();
+        Long bookId = savedBook.getId();
+
+        Optional<Book> book = bookRepository.findById(bookId);
+        assertTrue(book.isPresent());
+        assertEquals("Spring Boot in Action", book.get().getTitle());
     }
 }

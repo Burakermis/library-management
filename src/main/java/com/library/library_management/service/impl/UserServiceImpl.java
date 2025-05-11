@@ -1,5 +1,6 @@
 package com.library.library_management.service.impl;
 
+import com.library.library_management.dto.requests.CreateUserRequest;
 import com.library.library_management.dto.requests.UserRequest;
 import com.library.library_management.dto.responses.UserResponse;
 import com.library.library_management.entity.Role;
@@ -38,6 +39,21 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         log.info("User registered successfully with ID: {}", savedUser.getId());
+        return userMapper.toDto(savedUser);
+    }
+
+    @Override
+    public UserResponse createUser(CreateUserRequest createUserRequest) {
+        log.info("Attempting to create user with email: {}", createUserRequest.getEmail());
+        boolean exists = userRepository.findByEmail(createUserRequest.getEmail()).isPresent();
+        if (exists) {
+            log.warn("Create failed. Email already in use: {}", createUserRequest.getEmail());
+            throw new IllegalArgumentException("Bu e-posta adresi ile bir kullanıcı zaten mevcut.");
+        }
+        User user = userMapper.toEntity(createUserRequest);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User savedUser = userRepository.save(user);
+        log.info("User created successfully with ID: {}", savedUser.getId());
         return userMapper.toDto(savedUser);
     }
 

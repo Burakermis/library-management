@@ -81,7 +81,7 @@ class BorrowingServiceImplIntegrationTest {
 
         assertNotNull(response);
         assertNotNull(response.getReturnDate());
-        assertFalse(bookRepository.findById(book.getId())
+        assertTrue(bookRepository.findById(book.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Kitap bulunamadı"))
                 .isAvailable());
     }

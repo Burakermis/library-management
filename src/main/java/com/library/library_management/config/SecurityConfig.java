@@ -34,7 +34,7 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/api-docs/**"
                         ).hasRole("ADMIN")
-                        .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                        .requestMatchers("/api/v0/users/register", "/api/v0/users/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

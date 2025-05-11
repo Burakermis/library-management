@@ -1,5 +1,6 @@
 package com.library.library_management.controller;
 
+import com.library.library_management.dto.requests.CreateUserRequest;
 import com.library.library_management.dto.requests.LoginUserRequest;
 import com.library.library_management.dto.requests.UserRequest;
 import com.library.library_management.dto.responses.UserResponse;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
+@RequestMapping("/api/v0/users")
 public class UserController {
 
     private final UserService userService;
@@ -25,6 +26,12 @@ public class UserController {
     public ResponseEntity<String> loginUser(@RequestBody LoginUserRequest loginUserRequest) {
         String token = userService.login(loginUserRequest.getEmail(), loginUserRequest.getPassword());
         return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest createUserRequest) {
+        return ResponseEntity.ok(userService.createUser(createUserRequest));
     }
 
     @PutMapping("/{id}")
