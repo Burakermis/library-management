@@ -10,9 +10,6 @@ import com.library.library_management.security.JwtTokenProvider;
 import com.library.library_management.service.contract.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -69,14 +66,15 @@ public class UserServiceImpl implements UserService {
         log.info("Updating user with Email: {}", updatedUser.getEmail());
         boolean exists = userRepository.findByEmail(updatedUser.getEmail()).isPresent();
         if (exists) {
+            User user = userMapper.toEntity(updatedUser);
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            User savedUser = userRepository.save(user);
+            log.info("User with Email: {} updated successfully", updatedUser.getEmail());
+            return userMapper.toDto(savedUser);
+        } else {
             log.warn("Registration failed. Email already in use: {}", updatedUser.getEmail());
-            throw new IllegalArgumentException("Bu e-posta adresi ile bir kullanıcı zaten mevcut.");
+            throw new IllegalArgumentException("Bu e-posta adresi ile bir kullanıcı değil.");
         }
-        User user = userMapper.toEntity(updatedUser);
-        user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-        User savedUser = userRepository.save(user);
-        log.info("User with Email: {} updated successfully", updatedUser.getEmail());
-        return userMapper.toDto(savedUser);
     }
 
     @Override

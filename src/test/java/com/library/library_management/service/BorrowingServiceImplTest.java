@@ -78,12 +78,11 @@ class BorrowingServiceImplTest {
 
         BorrowingResponse result = borrowingService.borrowBook(userId, bookId);
 
-        assertNotNull(result, "Result should not be null");
-        assertEquals(1L, result.getId(), "Borrowing ID should match");
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
         verify(bookRepository, times(1)).save(book);
         verify(borrowingRepository, times(1)).save(any(Borrowing.class));
     }
-
 
     @Test
     void testBorrowBook_UserNotFound() {
@@ -168,7 +167,7 @@ class BorrowingServiceImplTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getId());
+        assertEquals(1L, result.getFirst().getId());
     }
 
     @Test
@@ -194,6 +193,6 @@ class BorrowingServiceImplTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getId());
+        assertEquals(1L, result.getFirst().getId());
     }
 }
