@@ -1,6 +1,7 @@
 # Library Management System
 
 Library Management System, kütüphane yönetimi için geliştirilmiş bir uygulamadır. Kullanıcılar, kitapları yönetebilir, ödünç alabilir, ve güvenli bir şekilde işlemlerini gerçekleştirebilir. JWT tabanlı kimlik doğrulama ve rol bazlı yetkilendirme ile sistemin güvenliği sağlanmıştır.
+![library_er_diagram](https://github.com/user-attachments/assets/c5f10931-298d-4565-8004-9efe28d8407a)
 
 ## Özellikler
 
