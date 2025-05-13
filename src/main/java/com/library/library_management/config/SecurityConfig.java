@@ -33,9 +33,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**",
                                 "/api-docs/**"
-                        ).permitAll()
-                        .requestMatchers("/api/v0/users/register", "/api/v0/users/login").permitAll()
-                        .anyRequest().authenticated()
+                        ).hasRole("ADMIN")
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
